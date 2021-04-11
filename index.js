@@ -18,7 +18,7 @@ const observable = new Observable(subscriber => {
     const id = setInterval(()=>{
         subscriber.next(count);
         count +=1;
-        subscriber.complete();
+
     },1000);
 
 
@@ -30,7 +30,15 @@ const observable = new Observable(subscriber => {
 });
 
 console.log("Before");
-observable.subscribe(observer);
+let subscription = observable.subscribe(observer);
+let subscription2 = observable.subscribe(observer);
+
+subscription.add(subscription2);
+
+setTimeout(()=>{
+    subscription.unsubscribe();
+},3500);
+
 console.log("after");
 
 //of('Hello', 'RxJS').subscribe(console.log);
