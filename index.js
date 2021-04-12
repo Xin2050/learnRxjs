@@ -1,4 +1,4 @@
-import {fromEvent, of, range, from} from 'rxjs';
+import {from} from 'rxjs';
 
 function* hello() {
     yield "hello";
@@ -16,7 +16,9 @@ const observer = {
 
 const source$ = from(iterator);
 
-source$.subscribe(observer);
+const subOne = source$.subscribe(observer);
+
+subOne.unsubscribe();
 
 
 
