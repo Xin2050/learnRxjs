@@ -1,4 +1,12 @@
-import { fromEvent } from 'rxjs';
+import {fromEvent, of, range, from} from 'rxjs';
+
+function* hello() {
+    yield "hello";
+    yield "wold!";
+}
+
+const iterator = hello();
+
 
 const observer = {
     next:val=>console.log('next',val),
@@ -6,14 +14,9 @@ const observer = {
     complete:()=>console.log('complete'),
 }
 
+const source$ = from(iterator);
 
-const source$ = fromEvent(document,'keyup');
+source$.subscribe(observer);
 
-const subOne = source$.subscribe(observer);
-const subTwo = source$.subscribe(observer);
 
-setTimeout(()=>{
-    console.log('unSubscribe');
-    subOne.unsubscribe();
-},3000)
 
