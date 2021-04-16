@@ -1,24 +1,11 @@
-import {from} from 'rxjs';
-
-function* hello() {
-    yield "hello";
-    yield "wold!";
-}
-
-const iterator = hello();
+import {interval,timer} from 'rxjs';
 
 
-const observer = {
-    next:val=>console.log('next',val),
-    error:error=>console.log('error',error),
-    complete:()=>console.log('complete'),
-}
+const timer$ = timer(2000); // interval(1000)
 
-const source$ = from(iterator);
 
-const subOne = source$.subscribe(observer);
+timer$.subscribe(console.log);
 
-subOne.unsubscribe();
 
 
 
