@@ -1,22 +1,24 @@
-import {of,fromEvent} from 'rxjs';
-import {map, mapTo, pluck,filter} from 'rxjs/operators';
+import {of,fromEvent, from , interval} from 'rxjs';
+import {map, mapTo, pluck, filter, reduce, take, scan} from 'rxjs/operators';
 
-function calculateScrollPercent(element) {
+const numbers = [1,2,3,4,5];
 
-    const {scrollTop,scrollHeight,clientHeight} = element;
-    return (scrollTop/(scrollHeight-clientHeight)) *100
-}
+const users = [
+    {name:'Brian',logged:false,token:null},
+    {name:'Xax',logged:true,token:"asdfsdlfksjdflkj"},
+    {name:'Leon',logged:true,token:"asdfsdlfksjdflkj"},
+]
 
-const progressBar = document.querySelector('.progress-bar');
+const state$ = from(users).pipe(
+    scan((accumulator,currentValue)=>{
+        return {...accumulator,...currentValue}
+    },{})
+);
 
-const scroll$ = fromEvent(document,'scroll');
-const progress$ = scroll$.pipe(
-    map(({target})=>calculateScrollPercent(target.scrollingElement))
-)
+const name$ = state$.pipe(
+    map(state=>state.name)
+);
 
-progress$.subscribe(percent=>{
-    progressBar.style.width = `${percent}%`;
-});
-
+name$.subscribe(console.log);
 
 
