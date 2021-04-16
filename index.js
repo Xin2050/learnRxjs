@@ -15,17 +15,46 @@ import {
     debounce, mergeAll, mergeMap,
 } from 'rxjs/operators';
 
-const inputBox = document.getElementById('text-input');
+// const inputBox = document.getElementById('text-input');
+//
+// const input$ = fromEvent(inputBox,'keyup');
+//
+// input$.pipe(
+//     debounceTime(1000),
+//     mergeMap(event=>{
+//         const term = event.target.value;
+//         return ajax.getJSON(
+//             `https://api.github.com/users/${term}`
+//         )
+//     }),
+//
+// ).subscribe(console.log)
+// //use case 1
+// const clicks$ = fromEvent(document,'click');
+// const mouseDown$ = fromEvent(document,'mousedown');
+// const mouseUp$ = fromEvent(document,'mouseup');
+// const interval$ = interval(1000);
+//
+// mouseDown$.pipe(
+//     mergeMap(()=>interval$.pipe(
+//         takeUntil(mouseUp$)
+//     ))
+// ).subscribe(console.log)
 
-const input$ = fromEvent(inputBox,'keyup');
+const click$ = fromEvent(document,'click');
 
-input$.pipe(
-    debounceTime(1000),
-    mergeMap(event=>{
-        const term = event.target.value;
-        return ajax.getJSON(
-            `https://api.github.com/users/${term}`
-        )
-    }),
+const coordinates$ = click$.pipe(
+    map(event=>({
+        x:event.clientX,
+        y:event.clientY
+    }))
+);
 
-).subscribe(console.log)
+const coordinatesWithSave$ = coordinates$.pipe(
+    mergeMap(coords=>ajax.post(
+        'https://www.mocky.io/v2/5185415ba171ea3a00704eed',
+        coords
+    ))
+)
+
+coordinatesWithSave$.subscribe(console.log);
