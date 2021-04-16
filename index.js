@@ -12,7 +12,7 @@ import {
     distinctUntilChanged,
     distinctUntilKeyChanged,
     debounceTime,
-    debounce, mergeAll, mergeMap,
+    debounce, mergeAll, mergeMap, switchMap,
 } from 'rxjs/operators';
 
 // const inputBox = document.getElementById('text-input');
@@ -30,6 +30,7 @@ import {
 //
 // ).subscribe(console.log)
 // //use case 1
+
 // const clicks$ = fromEvent(document,'click');
 // const mouseDown$ = fromEvent(document,'mousedown');
 // const mouseUp$ = fromEvent(document,'mouseup');
@@ -41,20 +42,27 @@ import {
 //     ))
 // ).subscribe(console.log)
 
-const click$ = fromEvent(document,'click');
+// const click$ = fromEvent(document,'click');
+//
+// const coordinates$ = click$.pipe(
+//     map(event=>({
+//         x:event.clientX,
+//         y:event.clientY
+//     }))
+// );
+//
+// const coordinatesWithSave$ = coordinates$.pipe(
+//     mergeMap(coords=>ajax.post(
+//         'https://www.mocky.io/v2/5185415ba171ea3a00704eed',
+//         coords
+//     ))
+// )
+//
+// coordinatesWithSave$.subscribe(console.log);
 
-const coordinates$ = click$.pipe(
-    map(event=>({
-        x:event.clientX,
-        y:event.clientY
-    }))
-);
+const clicks$ = fromEvent(document,'click');
+const interval$ = interval(1000);
 
-const coordinatesWithSave$ = coordinates$.pipe(
-    mergeMap(coords=>ajax.post(
-        'https://www.mocky.io/v2/5185415ba171ea3a00704eed',
-        coords
-    ))
-)
-
-coordinatesWithSave$.subscribe(console.log);
+clicks$.pipe(
+    switchMap(()=>interval$)
+).subscribe(console.log)
