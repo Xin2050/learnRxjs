@@ -9,30 +9,22 @@ import {
     takeWhile,
     tap,
     distinctUntilChanged,
-    distinctUntilKeyChanged
+    distinctUntilKeyChanged, debounceTime
 } from 'rxjs/operators';
 
 
 
-const numbers = [1,2,3,4,5];
+const click$ = fromEvent(document,'click');
 
-const users = [
-    {name:'Brian',logged:false,token:null},
-    {name:'Brian',logged:false,token:null},
-    {name:'Xax',logged:true,token:"asdfsdlfksjdflkj"},
-    {name:'Leon',logged:true,token:"asdfsdlfksjdflkj"},
-]
+click$.pipe(
+    debounceTime(1000)
+).subscribe(console.log)//
 
-const state$ = from(users).pipe(
-    scan((accumulator,currentValue)=>{
-        return {...accumulator,...currentValue}
-    },{})
-
-);
-
-const name$ = state$.pipe(
-    distinctUntilKeyChanged('name'),
-    map(state=>state.name),
-);
-
-name$.subscribe(console.log);
+//input
+const inputBox = document.getElementById('text-input');
+const input$ = fromEvent(inputBox,'keyup');
+input$.pipe(
+    debounceTime(1000),
+    pluck('target','value'),
+    distinctUntilChanged(),
+).subscribe(console.log)
