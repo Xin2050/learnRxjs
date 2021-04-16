@@ -1,4 +1,5 @@
 import {of,fromEvent,interval,from} from 'rxjs';
+import {ajax} from 'rxjs/ajax'
 import {
     map,
     mapTo,
@@ -11,7 +12,7 @@ import {
     distinctUntilChanged,
     distinctUntilKeyChanged,
     debounceTime,
-    debounce,
+    debounce, mergeAll, mergeMap,
 } from 'rxjs/operators';
 
 const inputBox = document.getElementById('text-input');
@@ -19,10 +20,12 @@ const inputBox = document.getElementById('text-input');
 const input$ = fromEvent(inputBox,'keyup');
 
 input$.pipe(
-    debounce((value)=>{
-        console.log(value);
-        return interval(1000)
+    debounceTime(1000),
+    mergeMap(event=>{
+        const term = event.target.value;
+        return ajax.getJSON(
+            `https://api.github.com/users/${term}`
+        )
     }),
-    pluck('target','value'),
-    distinctUntilChanged(),
+
 ).subscribe(console.log)
