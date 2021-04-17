@@ -11,18 +11,20 @@ import {
     distinctUntilChanged,
     distinctUntilKeyChanged,
     debounceTime,
-    debounce,
+    debounce, switchMap,
 } from 'rxjs/operators';
+import {ajax} from "rxjs/ajax";
+
 
 const inputBox = document.getElementById('text-input');
-
 const input$ = fromEvent(inputBox,'keyup');
-
+const BASE_URL = 'https://api.openbrewerydb.org/breweries'
 input$.pipe(
-    debounce((value)=>{
-        console.log(value);
-        return interval(1000)
-    }),
+    debounceTime(200),
     pluck('target','value'),
     distinctUntilChanged(),
+    switchMap(searchTerm=>{
+        return ajax.getJSON(
+            `${BASE_URL}?by_name=${searchTerm}`)
+    })
 ).subscribe(console.log)
