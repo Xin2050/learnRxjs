@@ -10,10 +10,11 @@ import {
     tap,
     distinctUntilChanged,
     distinctUntilKeyChanged,
-    debounceTime,
+    debounceTime,catchError,
     debounce, switchMap,
 } from 'rxjs/operators';
 import {ajax} from "rxjs/ajax";
+import {EMPTY} from "rxjs/src/internal/observable/empty";
 
 const typeaheadContainer = document.getElementById('typeahead-container');
 const inputBox = document.getElementById('text-input');
@@ -25,8 +26,14 @@ input$.pipe(
     distinctUntilChanged(),
     switchMap(searchTerm=>{
         return ajax.getJSON(
-            `${BASE_URL}?by_name=${searchTerm}`)
-    })
+            `${BASE_URL}?by_name=${searchTerm}`).pipe(
+                catchError((error,caught)=>{
+                    //caught is for retry
+                    return EMPTY; //ignored error
+                })
+        )
+    }),
+
 ).subscribe(response=>{
     typeaheadContainer.innerHTML = response.map(b=>b.name).join(('<br>'))
 })
