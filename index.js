@@ -1,22 +1,26 @@
-import {of,fromEvent} from 'rxjs';
-import {map, mapTo, pluck,filter} from 'rxjs/operators';
+import {of, fromEvent, timer} from 'rxjs';
+import {ajax} from 'rxjs/ajax';
+import {map, mapTo, pluck, filter, takeUntil, mergeMapTo, exhaustMap, finalize, switchMapTo, tap} from 'rxjs/operators';
 
-function calculateScrollPercent(element) {
 
-    const {scrollTop,scrollHeight,clientHeight} = element;
-    return (scrollTop/(scrollHeight-clientHeight)) *100
-}
+const startButton = document.getElementById('start');
+const stopButton = document.getElementById('stop');
+const pollingStatus = document.getElementById('polling-status');
+const dogImage = document.getElementById("dog");
 
-const progressBar = document.querySelector('.progress-bar');
+const startClick$ = fromEvent(startButton,'click');
+const stopClick$ = fromEvent(stopButton,'click');
 
-const scroll$ = fromEvent(document,'scroll');
-const progress$ = scroll$.pipe(
-    map(({target})=>calculateScrollPercent(target.scrollingElement))
-)
-
-progress$.subscribe(percent=>{
-    progressBar.style.width = `${percent}%`;
-});
+startClick$.pipe(
+    exhaustMap(()=>timer(0,5000).pipe(
+        tap(()=>pollingStatus.innerHTML = 'Active'),
+        switchMapTo(ajax.getJSON('https://random.dog/woof.json').pipe(
+            pluck('url')
+        )),
+        takeUntil(stopClick$),
+        finalize(()=>pollingStatus.innerHTML = "Stopped")
+    )),
+).subscribe(url=>dogImage.src= url);
 
 
 
