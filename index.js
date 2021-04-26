@@ -13,7 +13,6 @@ const interval$ = interval(2000).pipe(
 )
 const multicastedInterval$ = interval$.pipe(
     share(),
-
 );
 
 
