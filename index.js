@@ -1,28 +1,23 @@
 import {of, fromEvent, Subject, interval} from 'rxjs';
 import {map, mapTo, pluck, filter, tap} from 'rxjs/operators';
 
-const observer = {
-    next: val => console.log('next', val),
-    error: err => console.log('error', err),
-    complete: () => console.log('complete')
-};
+//loadingService
+const loading$ = new Subject();
+const loadingService = {
+    showLoading: ()=>loading$.next(true),
+    hideLoading:()=>loading$.next(false),
+    loadingStatus$: loading$.asObservable(),
+}
 
 
-
-const subject$ = new Subject();
-
-const subscription$ = subject$.subscribe(observer);
-
-
-
-const subscription$2 = subject$.subscribe(observer);
-
-
-
-const interval$ = interval(2000).pipe(
-    tap(val=>console.log("new interval",val)),
-)
-
-
-interval$.subscribe(subject$);
+const loadingOverlay = document.getElementById('loading-overlay');
+loadingService.loadingStatus$.subscribe(isLoading=>{
+    if(isLoading){
+        loadingOverlay.classList.add('open');
+    }else{
+        loadingOverlay.classList.remove('open');
+    }
+});
+loadingService.showLoading();
+setTimeout(()=>loadingService.hideLoading(),3000);
 
