@@ -1,5 +1,5 @@
 import {interval, Subject, timer} from 'rxjs';
-import {tap} from "rxjs/operators";
+import {multicast, refCount, share, tap} from "rxjs/operators";
 
 const observer ={
     next: val=> console.log('next',val),
@@ -7,15 +7,25 @@ const observer ={
     complete: ()=> console.log('complete'),
 }
 
-const subject = new Subject();
+
 const interval$ = interval(2000).pipe(
     tap(i=>console.log('new interval',i))
 )
-interval$.subscribe(subject);
+const multicastedInterval$ = interval$.pipe(
+    share(),
 
-const subOne = subject.subscribe(observer);
-const subTwo = subject.subscribe(observer);
+);
 
+
+const subOne = multicastedInterval$.subscribe(observer);
+const subTwo = multicastedInterval$.subscribe(observer);
+
+
+
+setTimeout(()=>{
+    subOne.unsubscribe();
+    subTwo.unsubscribe();
+},3000)
 
 
 
