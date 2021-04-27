@@ -16,14 +16,8 @@ const observer ={
     complete: ()=> console.log('complete'),
 }
 
-// const sub = asyncScheduler.schedule(console.log,200,"Hello World!");
-//
-// console.log('sync');
-//
-// sub.unsubscribe();
-of(4,5,6).pipe(
-    tap(val=>console.log('from tap',val)),
-    observeOn(asyncScheduler,2000)
-).subscribe(observer);
-// of(1,2,3).subscribe(observer);
-// console.log('sync')
+asyncScheduler.schedule(console.log,0,"AsyncScheduler");  //3
+asapScheduler.schedule(console.log,0,"AsapScheduler"); //1
+Promise.resolve('from promise').then(console.log) //2
+
+console.log("synchronous console.log")
