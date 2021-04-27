@@ -1,4 +1,4 @@
-import {BehaviorSubject, interval, Subject, timer} from 'rxjs';
+import {BehaviorSubject, interval, ReplaySubject, Subject, timer} from 'rxjs';
 import {multicast, refCount, share, tap} from "rxjs/operators";
 
 const observer ={
@@ -7,7 +7,10 @@ const observer ={
     complete: ()=> console.log('complete'),
 }
 
-const subject = new BehaviorSubject("Hello");
+const subject = new ReplaySubject(2);
+subject.next("hello")
+subject.next('world');
+subject.next('goodbye');
 
 const subscription = subject.subscribe(observer);
 
@@ -15,7 +18,7 @@ const secondSubscription = subject.subscribe(
     observer
 )
 
-subject.next('world');
+
 
 setTimeout(()=>{
     subject.subscribe(observer);
