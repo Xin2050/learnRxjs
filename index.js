@@ -1,4 +1,4 @@
-import {interval, Subject, timer} from 'rxjs';
+import {BehaviorSubject, interval, Subject, timer} from 'rxjs';
 import {multicast, refCount, share, tap} from "rxjs/operators";
 
 const observer ={
@@ -7,25 +7,18 @@ const observer ={
     complete: ()=> console.log('complete'),
 }
 
+const subject = new BehaviorSubject("Hello");
 
-const interval$ = interval(2000).pipe(
-    tap(i=>console.log('new interval',i))
+const subscription = subject.subscribe(observer);
+
+const secondSubscription = subject.subscribe(
+    observer
 )
-const multicastedInterval$ = interval$.pipe(
-    share(),
-);
 
-
-const subOne = multicastedInterval$.subscribe(observer);
-const subTwo = multicastedInterval$.subscribe(observer);
-
-
+subject.next('world');
 
 setTimeout(()=>{
-    subOne.unsubscribe();
-    subTwo.unsubscribe();
+    subject.subscribe(observer);
 },3000)
-
-
 
 
