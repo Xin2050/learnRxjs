@@ -1,5 +1,6 @@
-import {BehaviorSubject, interval, ReplaySubject, Subject, timer} from 'rxjs';
-import {multicast, refCount, share, tap} from "rxjs/operators";
+import {BehaviorSubject, fromEvent, interval, ReplaySubject, Subject, timer} from 'rxjs';
+import {mergeMapTo, multicast, refCount, share, shareReplay, tap} from "rxjs/operators";
+import {ajax} from "rxjs/ajax";
 
 const observer ={
     next: val=> console.log('next',val),
@@ -7,21 +8,21 @@ const observer ={
     complete: ()=> console.log('complete'),
 }
 
-const subject = new ReplaySubject(2);
-subject.next("hello")
-subject.next('world');
-subject.next('goodbye');
+const ajax$ = ajax(
+    'https://api.github.com/users/octocat'
+);
 
-const subscription = subject.subscribe(observer);
+const click$ = fromEvent(document,'click');
 
-const secondSubscription = subject.subscribe(
-    observer
-)
+const clickRequest$ = click$.pipe(
+    mergeMapTo(ajax$),
+    shareReplay(2,2000)
 
+);
 
+clickRequest$.subscribe(observer);
 
-setTimeout(()=>{
-    subject.subscribe(observer);
-},3000)
-
+setTimeout(()=> {
+    clickRequest$.subscribe(observer);
+},5000)
 
