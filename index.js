@@ -16,13 +16,13 @@ const observer ={
     complete: ()=> console.log('complete'),
 }
 
-asyncScheduler.schedule(()=>console.log("async"));
+asyncScheduler.schedule(console.log,200,'async');
 setTimeout(() => {console.log("setTimeout")});
 
-asapScheduler.schedule(()=>console.log("microtask asap"))
+asapScheduler.schedule(console.log,null,'microtask from p')
 queueMicrotask(()=>{console.log("microtask")});
 
-animationFrameScheduler.schedule(()=>console.log("animationFrameSched"))
+animationFrameScheduler.schedule(console.log, null, 'aframe from sch');
 requestAnimationFrame(()=>{console.log('animationFrame')});
 
 queueScheduler.schedule(()=>{
