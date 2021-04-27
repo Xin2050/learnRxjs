@@ -1,4 +1,13 @@
-import {AsyncSubject, BehaviorSubject, interval, Subject, timer} from 'rxjs';
+import {
+    animationFrameScheduler,
+    asapScheduler,
+    asyncScheduler,
+    AsyncSubject,
+    BehaviorSubject,
+    interval, queueScheduler,
+    Subject,
+    timer
+} from 'rxjs';
 import {multicast, refCount, share, tap} from "rxjs/operators";
 
 const observer ={
@@ -7,16 +16,18 @@ const observer ={
     complete: ()=> console.log('complete'),
 }
 
-const subject = new AsyncSubject();
+asyncScheduler.schedule(()=>console.log("async"));
+setTimeout(() => {console.log("setTimeout")});
 
-const subscription = subject.subscribe(observer);
+asapScheduler.schedule(()=>console.log("microtask asap"))
+queueMicrotask(()=>{console.log("microtask")});
 
-subject.next('world');
-subject.next('world');
-subject.next('world');
-setTimeout(()=>{
-    subject.subscribe(observer);
-},3000)
+animationFrameScheduler.schedule(()=>console.log("animationFrameSched"))
+requestAnimationFrame(()=>{console.log('animationFrame')});
 
-subject.complete()
+queueScheduler.schedule(()=>{
+    //schedule additional task
+})
 
+console.log('first');
+console.log("second");
